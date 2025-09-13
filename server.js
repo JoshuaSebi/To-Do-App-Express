@@ -19,7 +19,9 @@ app.get('/notes', (req,res)=> {
 app.get('/notes/:id', (req,res)=>{
     const id = +req.params.id;
     const note = notes.find(n => n.id == id);
-
+    res.render('note-detail', {
+        note: note
+    });
 });
 
 const notes = [
