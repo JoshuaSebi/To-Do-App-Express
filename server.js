@@ -8,22 +8,18 @@ app.set("views", "./views");
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
+//render home page
 app.get('/', (req, res)=>{
     res.render('index');
 })
 
-app.get('/notes', (req,res)=> {
-    res.render('notes',{
-        theTitle: "My Notes",
-        notes: database.getNotes()
-    });
-})
 
+//Render create note page
 app.get('/new', (req,res)=>{
     res.render('createNote');
 });
 
-
+//Handle new note creation
 app.post('/new', (req,res)=>{
     const title = req.body.title;
     const content = req.body.content;
@@ -31,13 +27,36 @@ app.post('/new', (req,res)=>{
     res.redirect('/notes');
 });
 
+//Handle note deletion
+app.post('/notes/:id/delete', (req,res)=>{
+    const id = +req.params.id;
+    database.deleteNote(id);
+    res.redirect('/notes');
+});
+
+//Render each note page
 app.get('/notes/:id', (req,res)=>{
     const id = +req.params.id;
-    const note = database.getNotes().find(n => n.id == id);
+    const note = database.getNote(id);
+    if (!note) {
+        // if no note found, show error page or message
+        return res.status(404).send("Note not found");
+    }
     res.render('note-detail', {
         note: note
     });
 });
+
+//Search notes
+app.get('/notes', (req,res)=>{
+    const query = req.query.searchTerm;
+    const results = database.getNotes(query);
+    res.render('notes.ejs', {
+        theTitle: query ? `Search results for "${query}"` : "All Notes",
+        notes: results
+    });
+});
+
 
 app.use(express.static('public'));
 

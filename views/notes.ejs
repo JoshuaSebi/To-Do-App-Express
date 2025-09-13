@@ -7,10 +7,14 @@
     <link rel="stylesheet" href="/styles.css ">
 </head>
 <body>
-    <h1> <%= theTitle %></h1>
-
+    <form action="/notes" method="GET">
+        <label for="searchInput"></label>
+        <input type="text" name="searchTerm" placeholder="Search Notes" id="searchInput">
+        <button type="submit">Search</button>
+    </form>
+    <h1> <%= theTitle %> </h1>
     <ul>
-        <% notes.map(i => { %>
+        <% notes.forEach(i => { %>
             <li>
                 <% const id = i.id %>
                 <h2><%= i.title %></h2>
